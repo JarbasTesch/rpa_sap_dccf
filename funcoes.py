@@ -3,6 +3,7 @@ import win32com.client
 import time
 import pyautogui
 
+
 def conectar_sap():
     try:
         SapGuiAuto = win32com.client.GetObject("SAPGUISERVER")
@@ -54,3 +55,6 @@ def iniciar_sap():
 def teste(session):
     session.findById("wnd[0]/tbar[0]/okcd").text = "ME5A"
     session.findById("wnd[0]").sendVKey(0)
+
+def gambiarra():
+    pass
