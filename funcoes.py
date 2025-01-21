@@ -19,7 +19,7 @@ def conectar_sap():
         session.findById("wnd[0]").resizeWorkingPane(235, 50, False) # Tela cheia
         session.findById("wnd[0]/usr/txtRSYST-MANDT").text = "100"  # Cliente
         session.findById("wnd[0]/usr/txtRSYST-BNAME").text = "0931221"  # Usuário
-        session.findById("wnd[0]/usr/pwdRSYST-BCODE").text = "@Floki1046"  # Senha
+        session.findById("wnd[0]/usr/pwdRSYST-BCODE").text = "@Floki1046967000"  # Senha
         session.findById("wnd[0]/usr/txtRSYST-LANGU").text = "PT"  # Idioma
         session.findById("wnd[0]/usr/txtRSYST-LANGU").setFocus()
         session.findById("wnd[0]/usr/txtRSYST-LANGU").caretPosition = 2
@@ -56,5 +56,18 @@ def teste(session):
     session.findById("wnd[0]/tbar[0]/okcd").text = "ME5A"
     session.findById("wnd[0]").sendVKey(0)
 
-def gambiarra():
-    pass
+
+def funcao_sap():
+    try:
+
+        iniciar_sap()
+
+        session = conectar_sap()
+
+        if session:
+            print("Conexão e login bem-sucedidos! Pronto para executar comandos no SAP.")
+        else:
+            print("Falha ao conectar ao SAP após iniciar.")
+
+    except Exception as e:
+        print(f"Erro na execução da 'funcao_sap': {e}")

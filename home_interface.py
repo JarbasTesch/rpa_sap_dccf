@@ -13,7 +13,7 @@ janela.config(bg = cor_fundo)
 titulo = Label(janela, text = 'RPA - DPE', bg = cor_fundo, font= ('Arial', 23, 'bold'))
 titulo.pack(pady=15)
 
-btn_opcao_um = Button(janela, text = 'Logar no SAP', bg = cor_btn, font= ('Arial', 15), width=12, height=1)
+btn_opcao_um = Button(janela, text = 'Logar no SAP', bg = cor_btn, font= ('Arial', 15), width=12, height=1, command=fcs.funcao_sap)
 btn_opcao_um.pack(pady = 15)
 
 btn_opcao_um = Button(janela, text = 'F.01 - Aberto', bg = cor_btn, font= ('Arial', 15), width=12, height=1)
