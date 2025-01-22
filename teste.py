@@ -1,23 +1,62 @@
-import tkinter as tk
-from tkinter import filedialog
+from tkinter import *
+import funcoes as fcs
+import config_interface as confinf
+import threading
+from tkinter import messagebox
+import traceback
 
-def selecionar_diretorio():
-    diretorio = filedialog.askdirectory(title="Selecione um diretório")
-    if diretorio:  # Verifica se um diretório foi selecionado
-        entry_diretorio.delete(0, tk.END)  # Limpa o campo atual
-        entry_diretorio.insert(0, diretorio)  # Insere o caminho selecionado
+main_window = Tk()
 
-# Criação da janela principal
-janela = tk.Tk()
-janela.title("Seleção de Diretório")
+main_window.title('Balanço - DPE')
+main_window.geometry('300x350')
+main_window.resizable(width=False, height=False)
+cor_fundo = '#c7d7c6'
+cor_btn = '#98c096'
+cor_letra = 'black'
+main_window.config(bg=cor_fundo)
 
-# Campo Entry para exibir o diretório selecionado
-entry_diretorio = tk.Entry(janela, width=50)
-entry_diretorio.grid(row=0, column=0, padx=10, pady=10)
+def executar_script_com_mensagem(funcao_script):
+    for widget in main_window.winfo_children():  # Desativando os botões
+        if isinstance(widget, Button):
+            widget.config(state="disabled")
 
-# Botão para abrir a janela de seleção de diretório
-botao_selecionar = tk.Button(janela, text="Selecionar Diretório", command=selecionar_diretorio)
-botao_selecionar.grid(row=0, column=1, padx=10, pady=10)
+    # Executa o script em uma thread separada
+    def wrapper():
+        try:
+            funcao_script()  # Executa a função do script
+        except Exception as e:
+            error_message = f"Ocorreu um erro durante a execução:\n{e}\n\nDetalhes:\n{traceback.format_exc()}"
+            main_window.after(0, lambda: messagebox.showerror("Erro", error_message))
+        finally:
+            main_window.after(0, lambda: ativar_botoes())
 
-# Loop principal da interface
-janela.mainloop()
+    def ativar_botoes():
+        for widget in main_window.winfo_children():  # Ativando os botões
+            if isinstance(widget, Button):
+                widget.config(state="normal")
+
+    # Inicia a thread para executar o script
+    thread = threading.Thread(target=wrapper)
+    thread.start()
+
+# Componentes da interface
+titulo = Label(main_window, text='RPA - DPE', bg=cor_fundo, fg=cor_letra, font=('Arial', 23, 'bold'))
+titulo.pack(pady=15)
+
+btn_login = Button(main_window, text='Logar no SAP', bg=cor_btn, fg=cor_letra, font=('Arial', 15), width=12, height=1,
+                   command=lambda: executar_script_com_mensagem(fcs.funcao_sap))
+btn_login.pack(pady=15)
+
+btn_aberto = Button(main_window, text='F.01 - Aberto', bg=cor_btn, fg=cor_letra, font=('Arial', 15), width=12, height=1,
+                    command=lambda: executar_script_com_mensagem(fcs.teste))
+btn_aberto.pack(pady=15)
+
+btn_consolidado = Button(main_window, text='F.01 - Consolidado', bg=cor_btn, fg=cor_letra, font=('Arial', 15), width=15, height=1)
+btn_consolidado.pack(pady=15)
+
+btn_config = Button(main_window, text="Opções", bg=cor_btn, command=lambda: confinf.open_config_interface(main_window))
+img = PhotoImage(file='config_icon.png')
+btn_config.config(image=img)
+btn_config.pack(pady=15)
+
+main_window.mainloop()

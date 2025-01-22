@@ -3,8 +3,10 @@ import json
 from tkinter import messagebox
 from tkinter import filedialog
 
-cor_fundo = '#c7d7c6'
-cor_btn = '#98c096'
+cor_fundo = '#c7d7c6'  ##3443eb
+cor_btn = '#98c096'  ##f5d142
+cor_letra = 'black'
+
 
 config_file = 'config.json'
 
@@ -24,41 +26,51 @@ def salvar_config_json(novas_configs):
     messagebox.showinfo("Sucesso", "Configurações salvas com sucesso!")
 
 
-def open_config_interface():
+
+def open_config_interface(main_window):
+    main_window.withdraw()
+
     config = carregar_json()
 
-    nova_tela = Toplevel()
-    nova_tela.title("Configuração")
-    nova_tela.geometry("300x350")
-    nova_tela.resizable(False, False)
-    nova_tela.config(bg=cor_fundo)
+    img = PhotoImage(file='folder_icon.png')
 
+    config_window = Toplevel()
+    config_window.title("Configuração")
+    config_window.geometry("300x350")
+    config_window.resizable(False, False)
+    config_window.config(bg=cor_fundo)
 
-    titulo = Label(nova_tela, text = 'RPA - DPE', bg = cor_fundo, font= ('Arial', 23, 'bold'))
+    def on_close():
+        main_window.deiconify()
+        config_window.destroy()
+
+    config_window.protocol("WM_DELETE_WINDOW", on_close)
+
+    titulo = Label(config_window, text = 'RPA - DPE', bg = cor_fundo, fg = cor_letra, font= ('Arial', 23, 'bold'))
     titulo.pack(pady=5)
 
-    espaco_acima = Frame(nova_tela, height=10, bg= cor_fundo)
+    espaco_acima = Frame(config_window, height=10, bg= cor_fundo)
     espaco_acima.pack(fill="x")
-    label = Label(nova_tela, text="Credenciais", bg= cor_fundo, font= ('Arial', 13, 'bold'))
+    label = Label(config_window, text="Credenciais", bg= cor_fundo, fg = cor_letra, font= ('Arial', 13, 'bold'))
     label.pack()
 
-    frame_login = Frame(nova_tela, bg=cor_fundo, padx=10, pady=5)
-    Label(frame_login, text="Login SAP:", bg= cor_fundo).pack(side=LEFT, padx=1, pady=5)
+    frame_login = Frame(config_window, bg=cor_fundo, padx=10, pady=5)
+    Label(frame_login, text="Login SAP:", bg= cor_fundo, fg = cor_letra).pack(side=LEFT, padx=1, pady=5)
     entry_login = Entry(frame_login)
     entry_login.pack(side=LEFT, padx=5)
     entry_login.insert(0, config.get("login", ""))
     frame_login.pack()
 
-    frame_senha = Frame(nova_tela, bg=cor_fundo, padx=10, pady=5)
-    Label(frame_senha, text="Senha SAP:", bg= cor_fundo).pack(side=LEFT, padx=1, pady=5)
+    frame_senha = Frame(config_window, bg=cor_fundo, padx=10, pady=5)
+    Label(frame_senha, text="Senha SAP:", bg= cor_fundo, fg = cor_letra).pack(side=LEFT, padx=1, pady=5)
     entry_senha = Entry(frame_senha, show = "*")
     entry_senha.pack(side=LEFT, padx=5)
     entry_senha.insert(0, config.get("senha", ""))
     frame_senha.pack()
 
-    espaco_acima = Frame(nova_tela, height=10, bg= cor_fundo)
+    espaco_acima = Frame(config_window, height=10, bg= cor_fundo)
     espaco_acima.pack(fill="x")
-    label = Label(nova_tela, text="Diretórios", bg= cor_fundo, font= ('Arial', 13, 'bold'))
+    label = Label(config_window, text="Diretórios", bg= cor_fundo, fg = cor_letra, font= ('Arial', 13, 'bold'))
     label.pack()
 
     def selecionar_diretorio(entry):
@@ -68,25 +80,31 @@ def open_config_interface():
             entry.delete(0, END)
             entry.insert(0, diretorio)
 
-    frame_diretorio_aberto = Frame(nova_tela, bg=cor_fundo, padx=5, pady=5)
-    Label(frame_diretorio_aberto, text="Diretorio aberto:", bg=cor_fundo).pack(side=LEFT, padx=1, pady=5)
+    frame_diretorio_aberto = Frame(config_window, bg=cor_fundo, padx=5, pady=5)
+    Label(frame_diretorio_aberto, text="Dir. aberto:", bg=cor_fundo, fg = cor_letra).pack(side=LEFT, padx=1, pady=5)
     entry_dir_aberto = Entry(frame_diretorio_aberto)
     entry_dir_aberto.pack(side=LEFT, padx=5, pady=5)
     entry_dir_aberto.insert(0, config.get("diretorio1", ""))
-    botao_dir_aberto = Button(frame_diretorio_aberto, text="Selecionar",
+    botao_dir_aberto = Button(frame_diretorio_aberto, text="folder", bg = cor_btn,
                               command=lambda: selecionar_diretorio(entry_dir_aberto))
+    botao_dir_aberto.config(image=img)
     botao_dir_aberto.pack(side=LEFT, padx=5, pady=5)
     frame_diretorio_aberto.pack()
 
-    frame_diretorio_consolidado = Frame(nova_tela, bg=cor_fundo, padx=5, pady=5)
-    Label(frame_diretorio_consolidado, text="Diretorio consolidado:", bg=cor_fundo).pack(side=LEFT, padx=1, pady=5)
+    frame_diretorio_consolidado = Frame(config_window, bg=cor_fundo, padx=5, pady=5)
+    Label(frame_diretorio_consolidado, text="Dir. consolidado:", bg=cor_fundo, fg = cor_letra).pack(side=LEFT, padx=1, pady=5)
     entry_dir_consolidado = Entry(frame_diretorio_consolidado)
     entry_dir_consolidado.pack(side=LEFT, padx=5, pady=5)
     entry_dir_consolidado.insert(0, config.get("diretorio2", ""))
-    botao_dir_consolidado = Button(frame_diretorio_consolidado, text="Selecionar",
+    botao_dir_consolidado = Button(frame_diretorio_consolidado, text="folder", bg = cor_btn,
                                    command=lambda: selecionar_diretorio(entry_dir_consolidado))
+    botao_dir_consolidado.config(image=img)
     botao_dir_consolidado.pack(side=LEFT, padx=5, pady=5)
     frame_diretorio_consolidado.pack()
+
+    def voltar_homepg():
+        config_window.destroy()
+        main_window.deiconify()
 
     def salvar():
         novas_configs = {
@@ -96,7 +114,9 @@ def open_config_interface():
             "diretorio2": entry_dir_consolidado.get()
         }
         salvar_config_json(novas_configs)
+        voltar_homepg()
 
-    Button(nova_tela, text= 'SALVAR', bg = '#98c096', command=salvar).pack(pady = 10)
+    Button(config_window, text='  SALVAR ', bg = cor_btn, command=salvar).pack()
+    Button(config_window, text='CANCELAR', bg='#de4b4b', command=voltar_homepg).pack(pady=4)
 
-    nova_tela.mainloop()
+    config_window.mainloop()
