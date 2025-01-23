@@ -16,71 +16,76 @@ def carregar_json():
         print('Arquivo JSON não encontrado ou inválido.')
         return {}
 
-def aguardar_sap_pronto():
-    """Aguarda até que o SAP GUI esteja pronto, verificando um elemento específico."""
-    while True:
+def funcao_sap():
+    # Abrir o exe do SAP
+    subprocess.Popen(r'C:\Program Files (x86)\SAP\NWBC65\NWBC')
+    print('\nAbrindo o exe do SAP...\n')
+
+    # Esperar até o SAP GUI estar carregado
+    time.sleep(1)
+
+    tentativas = 0
+    config = carregar_json()  # Carrega o config ANTES das tentativas
+
+    while tentativas <= 25:
         try:
             SapGuiAuto = win32com.client.GetObject("SAPGUISERVER")
             if not SapGuiAuto:
-                raise Exception("SAP GUI não está disponível.")
+                tentativas += 1
+                print("\nSAP GUI não está disponível...\n")
+                time.sleep(2)  # Delay entre tentativas
+                continue
 
             application = SapGuiAuto.GetScriptingEngine
             connection = application.Children(0)
             session = connection.Children(0)
 
-            # Verifica se o elemento específico está disponível
-            session.findById("wnd[0]/usr/txtRSYST-MANDT")
-            print("SAP GUI pronto para login.")
-            return session  # Retorna a sessão para uso
-        except Exception:
-            print("SAP GUI ainda não está pronto. Aguardando...")
-            time.sleep(1)  # Aguarda 1 segundo antes de tentar novamente
+            print('\nSAP GUI carregado com sucesso... Vamos realizar o login.\n')
 
-def conectar_sap():
-    try:
-        config = carregar_json()
+            # Realizar login
+            session.findById("wnd[0]").resizeWorkingPane(235, 50, False)  # Tela cheia
+            session.findById("wnd[0]/usr/txtRSYST-MANDT").text = "100"  # Cliente
+            session.findById("wnd[0]/usr/txtRSYST-BNAME").text = config.get("login", "")  # Usuário
+            session.findById("wnd[0]/usr/pwdRSYST-BCODE").text = config.get("senha", "")  # Senha
+            session.findById("wnd[0]/usr/txtRSYST-LANGU").text = "PT"  # Idioma
+            session.findById("wnd[0]/usr/txtRSYST-LANGU").setFocus()
+            session.findById("wnd[0]/usr/txtRSYST-LANGU").caretPosition = 2
+            session.findById("wnd[0]").sendVKey(0)
 
-        session = aguardar_sap_pronto()
+            try:
+                session.findById("wnd[1]/tbar[0]/btn[0]").press()
+                print("Elemento opcional encontrado e interagido com sucesso.")
+            except:
+                print("Elemento opcional não encontrado. Continuando a execução.")
 
-        session.findById("wnd[0]").resizeWorkingPane(235, 50, False)  # Tela cheia
-        session.findById("wnd[0]/usr/txtRSYST-MANDT").text = "100"  # Cliente
-        session.findById("wnd[0]/usr/txtRSYST-BNAME").text = config.get("login", "")  # Usuário
-        session.findById("wnd[0]/usr/pwdRSYST-BCODE").text = config.get("senha", "")  # Senha
-        session.findById("wnd[0]/usr/txtRSYST-LANGU").text = "PT"  # Idioma
-        session.findById("wnd[0]/usr/txtRSYST-LANGU").setFocus()
-        session.findById("wnd[0]/usr/txtRSYST-LANGU").caretPosition = 2
-        session.findById("wnd[0]").sendVKey(0)
+            time.sleep(1)
 
-        print("Login realizado com sucesso!")
-        return session
-    except Exception as e:
-        raise RuntimeError(f"Erro ao conectar ao SAP GUI: {e}")
+            # Verificar se o login foi bem-sucedido
+            try:
+                session.findById("wnd[0]/tbar[1]/btn[34]").setfocus()
+                print('Login realizado com sucesso')
+                return False, "Login realizado com sucesso."  # Erro=False, mensagem de sucesso
+            except:
+                print('Falha ao logar. Login e Senha podem estar errados.')
+                session.findById("wnd[0]").close()
+                return True, """\nFalha ao Logar. 
+                Login ou Senha podem estar errados.
+                Aperte no ícone de engrenagem para alterar as credenciais.
+                Depois aperte o botão novamente."""
 
-def iniciar_sap():
-    try:
-        sap_executable = r'C:\Program Files (x86)\SAP\NWBC65\NWBC'
+        except Exception as e:
+            print(f'Erro: {e}\nAguardando o SAP GUI carregar...\n')
+            tentativas += 1
+            time.sleep(2)  # Delay entre tentativas
 
-        # Abre o SAP GUI
-        subprocess.Popen([sap_executable])
-        print("Abrindo o SAP...")
+    # Caso o loop exceda o limite de tentativas
+    return True, "Não foi possível estabelecer conexão com o SAP GUI. Verifique o SAP e tente novamente."
 
-        # Aguarda até que o SAP GUI esteja pronto
-        session = aguardar_sap_pronto()
-        return session
-    except Exception as e:
-        print(f"Erro ao iniciar o SAP: {e}")
 
-def funcao_sap():
-    session = iniciar_sap()
-    if session:
-        session = conectar_sap()  # Realiza o login
-        if session:
-            print("Conexão e login bem-sucedidos! Pronto para executar comandos no SAP.")
-        else:
-            print("Falha ao conectar ao SAP após iniciar.")
-    else:
-        print("SAP GUI não foi iniciado corretamente.")
 
 def teste():
-    while True:
-        print('testando')
+    vezes = 0
+    while vezes <= 5:
+        print(f'opa {vezes}')
+        vezes += 1
+        time.sleep(1)

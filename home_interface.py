@@ -1,7 +1,6 @@
 from tkinter import *
 import funcoes as fcs
 import config_interface as confinf
-import threading
 from tkinter import messagebox
 
 main_window = Tk()
@@ -16,15 +15,20 @@ main_window.config(bg = cor_fundo)
 
 def executar_script_com_mensagem(funcao_script):
     try:
-        # Desativa os botões antes de executar o script
+        # Desativa todos os botões na janela
         for widget in main_window.winfo_children():
             if isinstance(widget, Button):
                 widget.config(state="disabled")
 
-        funcao_script()  # Executa a função diretamente no thread principal
+        # Executa a função passada
+        erro, mensagem = funcao_script()
+        if erro:
+            messagebox.showerror("Erro", mensagem)
+        else:
+            messagebox.showinfo("Sucesso", mensagem)
 
     except Exception as e:
-        # Exibe o erro na interface principal
+        # Exibe qualquer erro inesperado em uma mensagem
         messagebox.showerror("Erro", f"Ocorreu um erro durante a execução: {e}")
 
     finally:
@@ -32,6 +36,7 @@ def executar_script_com_mensagem(funcao_script):
         for widget in main_window.winfo_children():
             if isinstance(widget, Button):
                 widget.config(state="normal")
+
 
 titulo = Label(main_window, text = 'RPA - DPE', bg = cor_fundo, fg = cor_letra, font= ('Arial', 23, 'bold'))
 titulo.pack(pady=15)
@@ -51,5 +56,6 @@ btn_config = Button(main_window, text="Opções", bg = cor_btn, command= lambda:
 img = PhotoImage(file='config_icon.png')
 btn_config.config(image=img)
 btn_config.pack(pady = 15)
+
 
 main_window.mainloop()
