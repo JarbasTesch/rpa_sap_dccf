@@ -45,9 +45,9 @@ btn_login = Button(main_window, text = 'Logar no SAP', bg = cor_btn, fg = cor_le
                    command = lambda: executar_script_com_mensagem(fcs.funcao_sap))
 btn_login.pack(pady = 15)
 
-btn_aberto = Button(main_window, text = 'F.01 - Aberto', bg = cor_btn, fg = cor_letra,font= ('Arial', 15), width=12, height=1,
-                    command= lambda: executar_script_com_mensagem(fcs.teste))
-btn_aberto.pack(pady = 15)
+btn_corrente = Button(main_window, text = 'F.01 - corrente', bg = cor_btn, fg = cor_letra,font= ('Arial', 15), width=12, height=1,
+                    command=lambda: executar_script_com_mensagem(lambda: fcs.balanco_corrente(fcs.funcao_sap.session)))
+btn_corrente.pack(pady = 15)
 
 btn_consolidado = Button(main_window, text = 'F.01 - Consolidado', bg = cor_btn, fg = cor_letra,font= ('Arial', 15), width=15, height=1)
 btn_consolidado.pack(pady = 15)

@@ -80,16 +80,16 @@ def open_config_interface(main_window):
             entry.delete(0, END)
             entry.insert(0, diretorio)
 
-    frame_diretorio_aberto = Frame(config_window, bg=cor_fundo, padx=5, pady=5)
-    Label(frame_diretorio_aberto, text="Dir. aberto:", bg=cor_fundo, fg = cor_letra).pack(side=LEFT, padx=1, pady=5)
-    entry_dir_aberto = Entry(frame_diretorio_aberto)
-    entry_dir_aberto.pack(side=LEFT, padx=5, pady=5)
-    entry_dir_aberto.insert(0, config.get("diretorio1", ""))
-    botao_dir_aberto = Button(frame_diretorio_aberto, text="folder", bg = cor_btn,
-                              command=lambda: selecionar_diretorio(entry_dir_aberto))
-    botao_dir_aberto.config(image=img)
-    botao_dir_aberto.pack(side=LEFT, padx=5, pady=5)
-    frame_diretorio_aberto.pack()
+    frame_diretorio_corrente = Frame(config_window, bg=cor_fundo, padx=5, pady=5)
+    Label(frame_diretorio_corrente, text="Dir. corrente:", bg=cor_fundo, fg = cor_letra).pack(side=LEFT, padx=1, pady=5)
+    entry_dir_corrente = Entry(frame_diretorio_corrente)
+    entry_dir_corrente.pack(side=LEFT, padx=5, pady=5)
+    entry_dir_corrente.insert(0, config.get("diretorio1", ""))
+    botao_dir_corrente = Button(frame_diretorio_corrente, text="folder", bg = cor_btn,
+                              command=lambda: selecionar_diretorio(entry_dir_corrente))
+    botao_dir_corrente.config(image=img)
+    botao_dir_corrente.pack(side=LEFT, padx=5, pady=5)
+    frame_diretorio_corrente.pack()
 
     frame_diretorio_consolidado = Frame(config_window, bg=cor_fundo, padx=5, pady=5)
     Label(frame_diretorio_consolidado, text="Dir. consolidado:", bg=cor_fundo, fg = cor_letra).pack(side=LEFT, padx=1, pady=5)
@@ -110,7 +110,7 @@ def open_config_interface(main_window):
         novas_configs = {
             "login": entry_login.get(),
             "senha": entry_senha.get(),
-            "diretorio1": entry_dir_aberto.get(),
+            "diretorio1": entry_dir_corrente.get(),
             "diretorio2": entry_dir_consolidado.get()
         }
         salvar_config_json(novas_configs)
