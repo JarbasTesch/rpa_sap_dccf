@@ -1,2 +1,4 @@
-import funcoes as fcs
 import home_interface
+
+if __name__ == "__main__":
+    home_interface.main()

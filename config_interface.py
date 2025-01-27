@@ -2,13 +2,19 @@ from tkinter import *
 import json
 from tkinter import messagebox
 from tkinter import filedialog
+import sys
+import os
 
 cor_fundo = '#c7d7c6'  ##3443eb
 cor_btn = '#98c096'  ##f5d142
 cor_letra = 'black'
 
+def caminho_recurso(relative_path):
+    if hasattr(sys, "_MEIPASS"):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
 
-config_file = 'config.json'
+config_file = caminho_recurso('config.json')
 
 def carregar_json():
     try:
@@ -27,12 +33,13 @@ def salvar_config_json(novas_configs):
 
 
 
+caminho_icon_pasta = caminho_recurso("folder_icon.png")
+
 def open_config_interface(main_window):
     main_window.withdraw()
 
     config = carregar_json()
 
-    img = PhotoImage(file='folder_icon.png')
 
     config_window = Toplevel()
     config_window.title("Configuração")
@@ -80,6 +87,8 @@ def open_config_interface(main_window):
             entry.delete(0, END)
             entry.insert(0, diretorio)
 
+
+    img = PhotoImage(file=caminho_icon_pasta)
     frame_diretorio_corrente = Frame(config_window, bg=cor_fundo, padx=5, pady=5)
     Label(frame_diretorio_corrente, text="Dir. corrente:", bg=cor_fundo, fg = cor_letra).pack(side=LEFT, padx=1, pady=5)
     entry_dir_corrente = Entry(frame_diretorio_corrente)

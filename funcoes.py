@@ -2,8 +2,15 @@ import subprocess
 import win32com.client
 import time
 import json
+import os
+import sys
 
-config_file = 'config.json'
+def caminho_recurso(relative_path):
+    if hasattr(sys, "_MEIPASS"):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
+
+config_file = caminho_recurso('config.json')
 
 def carregar_json():
     try:
@@ -84,6 +91,9 @@ def funcao_sap():
 
 
 def balanco_corrente(session):
+
+    config = carregar_json()
+
     try:
         session.findById("wnd[0]/tbar[0]/okcd").text = "f.01"
         session.findById("wnd[0]").sendVKey(0)
@@ -104,7 +114,7 @@ def balanco_corrente(session):
         session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[1,0]").setFocus()
         session.findById("wnd[1]/tbar[0]/btn[0]").press()
         #talvez mude ↓
-        session.findById("wnd[1]/usr/ctxtDY_PATH").text = r"C:\Users\tesch\Documents"
+        session.findById("wnd[1]/usr/ctxtDY_PATH").text = config.get("diretorio1", "")
         session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "teste.txt"
         session.findById("wnd[1]/usr/ctxtDY_FILENAME").caretPosition = 9
         session.findById("wnd[1]/tbar[0]/btn[11]").press()
