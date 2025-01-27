@@ -69,7 +69,7 @@ def funcao_sap():
             except:
                 print('Falha ao logar. Login e Senha podem estar errados.')
                 session.findById("wnd[0]").close()
-                return True, """\nFalha ao Logar. 
+                return True, None, """\nFalha ao Logar. 
                 Login ou Senha podem estar errados.
                 Aperte no ícone de engrenagem para alterar as credenciais.
                 Depois aperte o botão novamente."""
@@ -80,31 +80,37 @@ def funcao_sap():
             time.sleep(2)  # Delay entre tentativas
 
     # Caso o loop exceda o limite de tentativas
-    return True, "Não foi possível estabelecer conexão com o SAP GUI. Verifique o SAP e tente novamente."
+    return True, None, "Não foi possível estabelecer conexão com o SAP GUI. Verifique o SAP e tente novamente."
 
 
 def balanco_corrente(session):
-    session.findById("wnd[0]/tbar[0]/okcd").text = "f.01"
-    session.findById("wnd[0]").sendVKey(0)
-    session.findById("wnd[0]/usr/ctxtSD_KTOPL-LOW").text = "pcf1"
-    session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/ctxtBILAVERS").text = "bn01"
-    session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/ctxtBILASPRA").text = "pt"
-    session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtBILBJAHR").text = "2025"
-    session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtB-MONATE-LOW").text = "1"
-    session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtB-MONATE-HIGH").text = "1"
-    session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtBILVJAHR").text = "2024"
-    session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtV-MONATE-LOW").text = "1"
-    session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtV-MONATE-HIGH").text = "1"
-    session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/radBILALIST").setFocus()
-    session.findById("wnd[0]").sendVKey(2)
-    session.findById("wnd[0]/tbar[1]/btn[8]").press()
-    session.findById("wnd[0]/mbar/menu[0]/menu[1]/menu[2]").select()
-    session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[1,0]").select()
-    session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[1,0]").setFocus()
-    session.findById("wnd[1]/tbar[0]/btn[0]").press()
-    session.findById("wnd[1]/usr/ctxtDY_PATH").text = r"C:\Users\tesch\Documents"
-    session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "teste.txt"
-    session.findById("wnd[1]/usr/ctxtDY_FILENAME").caretPosition = 9
-    session.findById("wnd[1]/tbar[0]/btn[11]").press()
-    session.findById("wnd[0]/tbar[0]/okcd").text = "/n"
-    session.findById("wnd[0]").sendVKey(0)
+    try:
+        session.findById("wnd[0]/tbar[0]/okcd").text = "f.01"
+        session.findById("wnd[0]").sendVKey(0)
+        session.findById("wnd[0]/usr/ctxtSD_KTOPL-LOW").text = "pcf1"
+        session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/ctxtBILAVERS").text = "bn01"
+        session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/ctxtBILASPRA").text = "pt"
+        session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtBILBJAHR").text = "2025"
+        session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtB-MONATE-LOW").text = "1"
+        session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtB-MONATE-HIGH").text = "1"
+        session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtBILVJAHR").text = "2024"
+        session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtV-MONATE-LOW").text = "1"
+        session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtV-MONATE-HIGH").text = "1"
+        session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/radBILALIST").setFocus()
+        #session.findById("wnd[0]").sendVKey(2)
+        session.findById("wnd[0]/tbar[1]/btn[8]").press()
+        session.findById("wnd[0]/mbar/menu[0]/menu[1]/menu[2]").select()
+        session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[1,0]").select()
+        session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[1,0]").setFocus()
+        session.findById("wnd[1]/tbar[0]/btn[0]").press()
+        #talvez mude ↓
+        session.findById("wnd[1]/usr/ctxtDY_PATH").text = r"C:\Users\tesch\Documents"
+        session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "teste.txt"
+        session.findById("wnd[1]/usr/ctxtDY_FILENAME").caretPosition = 9
+        session.findById("wnd[1]/tbar[0]/btn[11]").press()
+        session.findById("wnd[0]/tbar[0]/okcd").text = "/n"
+        session.findById("wnd[0]").sendVKey(0)
+        return False, session, "Extração do balanço corrente realizada."
+
+    except Exception as e:
+        return True, session, f"Falha na extração do balanço corrente.\n Erro: {e}"

@@ -21,7 +21,7 @@ def executar_script_com_mensagem(funcao_script):
                 widget.config(state="disabled")
 
         # Executa a função passada
-        erro, mensagem = funcao_script()
+        erro, mensagem, _ = funcao_script()
         if erro:
             messagebox.showerror("Erro", mensagem)
         else:
