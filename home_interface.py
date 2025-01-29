@@ -55,11 +55,12 @@ def main():
                        command = lambda: executar_script_com_mensagem(fcs.funcao_sap))
     btn_login.pack(pady = 15)
 
-    btn_corrente = Button(main_window, text = 'F.01 - corrente', bg = cor_btn, fg = cor_letra,font= ('Arial', 15), width=12, height=1,
+    btn_corrente = Button(main_window, text = 'F.01 - Corrente', bg = cor_btn, fg = cor_letra,font= ('Arial', 15), width=12, height=1,
                         command=lambda: executar_script_com_mensagem(lambda: fcs.balanco_corrente(fcs.funcao_sap.session)))
     btn_corrente.pack(pady = 15)
 
-    btn_consolidado = Button(main_window, text = 'F.01 - Consolidado', bg = cor_btn, fg = cor_letra,font= ('Arial', 15), width=15, height=1)
+    btn_consolidado = Button(main_window, text = 'F.01 - Consolidado', bg = cor_btn, fg = cor_letra,font= ('Arial', 15), width=15, height=1,
+                        command=lambda: executar_script_com_mensagem(lambda: fcs.balanco_fechado(fcs.funcao_sap.session)))
     btn_consolidado.pack(pady = 15)
 
     btn_config = Button(main_window, text="Opções", bg = cor_btn, command= lambda: confinf.open_config_interface(main_window))

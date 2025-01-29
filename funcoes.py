@@ -1,3 +1,4 @@
+from datetime import datetime
 import subprocess
 import win32com.client
 import time
@@ -72,14 +73,14 @@ def funcao_sap():
                 session.findById("wnd[0]/tbar[1]/btn[34]").setfocus()
                 print('Login realizado com sucesso')
                 funcao_sap.session = session
-                return False, session, "Login realizado com sucesso."  # Erro=False, mensagem de sucesso
+                return False, "Login realizado com sucesso.", session  # Erro=False, mensagem de sucesso
             except:
                 print('Falha ao logar. Login e Senha podem estar errados.')
                 session.findById("wnd[0]").close()
-                return True, None, """\nFalha ao Logar. 
+                return True, """\nFalha ao Logar. 
                 Login ou Senha podem estar errados.
                 Aperte no ícone de engrenagem para alterar as credenciais.
-                Depois aperte o botão novamente."""
+                Depois aperte o botão novamente.""", None
 
         except Exception as e:
             print(f'Erro: {e}\nAguardando o SAP GUI carregar...\n')
@@ -87,8 +88,11 @@ def funcao_sap():
             time.sleep(2)  # Delay entre tentativas
 
     # Caso o loop exceda o limite de tentativas
-    return True, None, "Não foi possível estabelecer conexão com o SAP GUI. Verifique o SAP e tente novamente."
+    return True, "Não foi possível estabelecer conexão com o SAP GUI. Verifique o SAP e tente novamente.", None
 
+hoje = datetime.now()
+mes_atual = hoje.month
+ano_atual = hoje.year
 
 def balanco_corrente(session):
 
@@ -100,14 +104,13 @@ def balanco_corrente(session):
         session.findById("wnd[0]/usr/ctxtSD_KTOPL-LOW").text = "pcf1"
         session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/ctxtBILAVERS").text = "bn01"
         session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/ctxtBILASPRA").text = "pt"
-        session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtBILBJAHR").text = "2025"
+        session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtBILBJAHR").text = ano_atual
         session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtB-MONATE-LOW").text = "1"
-        session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtB-MONATE-HIGH").text = "1"
-        session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtBILVJAHR").text = "2024"
+        session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtB-MONATE-HIGH").text = mes_atual
+        session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtBILVJAHR").text = ano_atual - 1
         session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtV-MONATE-LOW").text = "1"
-        session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtV-MONATE-HIGH").text = "1"
+        session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtV-MONATE-HIGH").text = mes_atual
         session.findById("wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/radBILALIST").setFocus()
-        #session.findById("wnd[0]").sendVKey(2)
         session.findById("wnd[0]/tbar[1]/btn[8]").press()
         session.findById("wnd[0]/mbar/menu[0]/menu[1]/menu[2]").select()
         session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[1,0]").select()
@@ -115,12 +118,76 @@ def balanco_corrente(session):
         session.findById("wnd[1]/tbar[0]/btn[0]").press()
         #talvez mude ↓
         session.findById("wnd[1]/usr/ctxtDY_PATH").text = config.get("diretorio1", "")
-        session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "teste.txt"
+        session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "balanco_corrente.txt"
         session.findById("wnd[1]/usr/ctxtDY_FILENAME").caretPosition = 9
         session.findById("wnd[1]/tbar[0]/btn[11]").press()
         session.findById("wnd[0]/tbar[0]/okcd").text = "/n"
         session.findById("wnd[0]").sendVKey(0)
-        return False, session, "Extração do balanço corrente realizada."
+        return False, "Extração do balanço corrente realizada.", session
 
     except Exception as e:
-        return True, session, f"Falha na extração do balanço corrente.\n Erro: {e}"
+        return True, f"Falha na extração do balanço corrente.\n Erro: {e}", session
+
+
+
+def mes_ano_balanco(mes, ano):
+
+    mes_balanco = mes - 2
+    ano_balanco = ano
+
+    if mes_balanco == 0:
+        mes_balanco = 12
+        ano_balanco -= 1
+
+    if mes_balanco == -1:
+        mes_balanco = 11
+        ano_balanco -= 1
+
+    return mes_balanco, ano_balanco
+
+
+def balanco_fechado(session):
+    # print('mês: ', mes_ano_balanco(mes_atual, ano_atual)[0])
+    # print('ano: ', mes_ano_balanco(mes_atual, ano_atual)[1])
+    config = carregar_json()
+
+    try:
+        session.findById("wnd[0]/tbar[0]/okcd").text = "f.01"
+        session.findById("wnd[0]").sendVKey(0)
+        session.findById("wnd[0]/usr/ctxtSD_KTOPL-LOW").text = "pcf1"
+        session.findById(
+            "wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/ctxtBILAVERS").text = "bn01"
+        session.findById(
+            "wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/ctxtBILASPRA").text = "pt"
+        session.findById(
+            "wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtBILBJAHR").text = mes_ano_balanco(mes_atual, ano_atual)[1]
+        session.findById(
+            "wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtB-MONATE-LOW").text = "1"
+        session.findById(
+            "wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtB-MONATE-HIGH").text = mes_ano_balanco(mes_atual, ano_atual)[0]
+        session.findById(
+            "wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtBILVJAHR").text = mes_ano_balanco(mes_atual, ano_atual)[1] - 1
+        session.findById(
+            "wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtV-MONATE-LOW").text = "1"
+        session.findById(
+            "wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/txtV-MONATE-HIGH").text = mes_ano_balanco(mes_atual, ano_atual)[0]
+        session.findById(
+            "wnd[0]/usr/tabsTABSTRIP_TABBL1/tabpUCOM1/ssub%_SUBSCREEN_TABBL1:RFBILA00:0001/radBILALIST").setFocus()
+        session.findById("wnd[0]/tbar[1]/btn[8]").press()
+        session.findById("wnd[0]/mbar/menu[0]/menu[1]/menu[2]").select()
+        session.findById(
+            "wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[1,0]").select()
+        session.findById(
+            "wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[1,0]").setFocus()
+        session.findById("wnd[1]/tbar[0]/btn[0]").press()
+        # talvez mude ↓
+        session.findById("wnd[1]/usr/ctxtDY_PATH").text = config.get("diretorio2", "")
+        session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "balanco_fechado.txt"
+        session.findById("wnd[1]/usr/ctxtDY_FILENAME").caretPosition = 9
+        session.findById("wnd[1]/tbar[0]/btn[11]").press()
+        session.findById("wnd[0]/tbar[0]/okcd").text = "/n"
+        session.findById("wnd[0]").sendVKey(0)
+        return False, "Extração do balanço corrente realizada.", session
+
+    except Exception as e:
+        return True, f"Falha na extração do balanço corrente.\n Erro: {e}", session
